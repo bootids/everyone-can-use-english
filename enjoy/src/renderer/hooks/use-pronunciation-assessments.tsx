@@ -2,9 +2,12 @@ import * as sdk from "microsoft-cognitiveservices-speech-sdk";
 import { useContext } from "react";
 import { AppSettingsProviderContext } from "@renderer/context";
 import camelcaseKeys from "camelcase-keys";
+import { AISettingsProviderContext } from "@renderer/context";
 
 export const usePronunciationAssessments = () => {
   const { webApi, EnjoyApp } = useContext(AppSettingsProviderContext);
+  const { azure } = useContext(AISettingsProviderContext);
+  const isSettingAzure = !!azure?.key;
 
   const createAssessment = async (params: {
     language: string;
@@ -26,15 +29,20 @@ export const usePronunciationAssessments = () => {
 
     const { language, reference = recording.referenceText } = params;
 
-    const {
-      id: tokenId,
-      token,
-      region,
-    } = await webApi.generateSpeechToken({
-      purpose: "pronunciation_assessment",
-      targetId,
-      targetType,
-    });
+    let tokenId, token, region;
+    if (!isSettingAzure) {
+      const { id, token: generatedToken, region: generatedRegion } = await webApi.generateSpeechToken({
+        purpose: "pronunciation_assessment",
+        targetId,
+        targetType,
+      });
+      tokenId = id;
+      token = generatedToken;
+      region = generatedRegion;
+    } else {
+      token = azure.key;
+      region = azure.region;
+    }
 
     const result = await assess(
       {
@@ -83,7 +91,18 @@ export const usePronunciationAssessments = () => {
   ): Promise<sdk.PronunciationAssessmentResult> => {
     const { blob, language, reference } = params;
     const { token, region } = options;
-    const config = sdk.SpeechConfig.fromAuthorizationToken(token, region);
+    let config;
+    if (isSettingAzure) {
+      config = sdk.SpeechConfig.fromSubscription(
+        token,
+        region
+      );
+    } else {
+      config = sdk.SpeechConfig.fromAuthorizationToken(
+        token,
+        region
+      );
+    }
     const audioConfig = sdk.AudioConfig.fromWavFileInput(
       new File([blob], "audio.wav")
     );

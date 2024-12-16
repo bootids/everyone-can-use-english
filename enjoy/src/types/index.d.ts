@@ -17,6 +17,30 @@ type LlmProviderType = {
   models?: string;
 };
 
+type AzureRegionEnum =
+  | "eastus"
+  | "eastus2"
+  | "southcentralus"
+  | "westus2"
+  | "westus3"
+  | "australiaeast"
+  | "southeastasia"
+  | "northeurope"
+  | "swedencentral"
+  | "uksouth"
+  | "westeurope"
+  | "centralus"
+  | "southafricanorth"
+  | "centralindia"
+  | "eastasia"
+  | "japaneast"
+  | "koreacentral";
+
+type AzureConfigType = {
+  key?: string;
+  region?: AzureRegionEnum;
+};
+
 type DownloadStateType = {
   name: string;
   isPaused: boolean;
@@ -277,3 +301,4 @@ type EchogardenSttConfigType = {
     enableGPU?: boolean;
   };
 };
+

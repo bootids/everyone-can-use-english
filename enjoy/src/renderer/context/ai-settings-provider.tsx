@@ -23,6 +23,8 @@ type AISettingsProviderState = {
   setTtsConfig?: (config: TtsConfigType) => Promise<void>;
   echogardenSttConfig?: EchogardenSttConfigType;
   setEchogardenSttConfig?: (config: EchogardenSttConfigType) => Promise<void>;
+  azure?: AzureConfigType;
+  setAzure?: (config: AzureConfigType) => Promise<void>;
 };
 
 const initialState: AISettingsProviderState = {};
@@ -54,6 +56,7 @@ export const AISettingsProvider = ({
     },
   });
   const [openai, setOpenai] = useState<LlmProviderType>(null);
+  const [azure, setAzure] = useState<AzureConfigType>(null);
 
   const refreshGptProviders = async () => {
     let providers = GPT_PROVIDERS;
@@ -205,6 +208,11 @@ export const AISettingsProvider = ({
       setOpenai(Object.assign({ name: "openai" }, _openai));
     }
 
+    const _azure = await EnjoyApp.userSettings.get(UserSettingKeyEnum.AZURE);
+    if (_azure) {
+      setAzure(Object.assign({ name: "azure" }, _azure));
+    }
+
     const _gptEngine = await EnjoyApp.userSettings.get(
       UserSettingKeyEnum.GPT_ENGINE
     );
@@ -245,6 +253,11 @@ export const AISettingsProvider = ({
     setOpenai(Object.assign({ name: "openai" }, config));
   };
 
+  const handleSetAzure = async (config: AzureConfigType) => {
+    await EnjoyApp.userSettings.set(UserSettingKeyEnum.AZURE, config);
+    setAzure(Object.assign({ name: "azure" }, config));
+  };
+
   return (
     <AISettingsProviderContext.Provider
       value={{
@@ -276,6 +289,8 @@ export const AISettingsProvider = ({
         setTtsConfig: (config: TtsConfigType) => handleSetTtsConfig(config),
         gptProviders,
         ttsProviders,
+        azure,
+        setAzure: (config: AzureConfigType) => handleSetAzure(config),
       }}
     >
       {children}

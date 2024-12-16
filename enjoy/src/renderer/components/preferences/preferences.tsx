@@ -12,6 +12,7 @@ import {
   SttSettings,
   TtsSettings,
   OpenaiSettings,
+  AzureSettings,
   ProxySettings,
   ResetSettings,
   ResetAllSettings,
@@ -80,6 +81,7 @@ export const Preferences = () => {
           <NetworkState />
           <Separator />
           <OpenaiSettings />
+          <AzureSettings />
           <Separator />
           <RecorderSettings />
           <Separator />

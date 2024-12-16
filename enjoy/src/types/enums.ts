@@ -5,6 +5,7 @@ export enum UserSettingKeyEnum {
   LEARNING_LANGUAGE = "learning_language",
   WHISPER = "whisper",
   OPENAI = "openai",
+  AZURE = "azure",
   HOTKEYS = "hotkeys",
   GPT_ENGINE = "gpt_engine",
   STT_ENGINE = "stt_engine",
@@ -56,3 +57,4 @@ export enum ChatMessageStateEnum {
   PENDING = "pending",
   COMPLETED = "completed",
 }
+
